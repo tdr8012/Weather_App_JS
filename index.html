@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Parisienne&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../Weather App/index.css">
 </head>
 <body>
     <form class="weatherForm">
@@ -12,12 +15,12 @@
 
         <button type="submit" class="submitButton">Get Weather</button>
 
-        <div class="card">
+        <div class="card" style = "display: none;">
             <h1 class="cityName">Melbourne</h1>
             <p class="temperature">5°C</p>
             <p class="humidityDisplay">Humidity80%</p>
             <p class="description">Clear sky</p>
-            <img class="weatherIcon" src="" alt="Weather Icon">
+            <img class="weatherIcon" src="" alt="Weather Icon" style ="display: none;">
             <p class="errorDisplay">Please enter a city name</p>
         </div>
     </form>
