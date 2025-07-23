@@ -1,7 +1,9 @@
 const weatherForm = document.querySelector(".weatherForm");
 const cityInput = document.querySelector(".cityInput");
-const card = document.querySelector(".card");
+let card = document.querySelector(".card");
 const apiKey = "d7c6d84bafbd9a28bac90fad59fb66ba";
+let searchButton = document.querySelector(".submitButton");
+
 
 weatherForm.addEventListener("submit", async event => {
     event.preventDefault();
@@ -28,39 +30,56 @@ weatherForm.addEventListener("submit", async event => {
 async function getWeatherData(city) {
     const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}`;
     const response = await fetch(apiUrl);
+    console.log(response)
     if (!response.ok) throw new Error("City not found");
     return await response.json();
 }
 
-// Display weather information on the page
+/**
+ * Display weather information on the page
+ */
 function displayWeatherInfo(data) {
     try {
+        console.log(data); // Log the entire data object for debugging
         const cityName = document.querySelector(".cityName");
         const temperature = document.querySelector(".temperature");
         const description = document.querySelector(".description");
-        const humidity = document.querySelector(".humidityDisplay");
+        const humidityDisplay = document.querySelector(".humidityDisplay");
         const weatherIcon = document.querySelector(".weatherIcon");
-
+        const dateTime = document.querySelector(".dateTime");
+        const timeDisplay = document.querySelector(".timeDisplay");
+        
         // Check if all required elements exist
-        if (!cityName || !temperature || !description || !humidity || !weatherIcon) {
-            displayError("Some display elements are missing.");
-            return;
+        if (!weatherIcon || !dateTime || !timeDisplay) {
+            throw new Error("Missing weather display elements");
         }
 
         // Destructure relevant data from API response
-        const { name, main: { temp, humidity: hum }, weather: [{ description: desc, icon }] } = data;
+        const { 
+            name, 
+            timezone, 
+            main: { temp, humidity }, 
+            weather: [{ description: desc, icon, id }] 
+        } = data;
+
+        console.log("name:", name);
+        console.log("timezone:", timezone);
+        console.log("temp:", temp);
+        console.log("humidity:", humidity);
+        console.log("desc:", desc);
+        console.log("icon:", icon);
 
         // Update UI with weather data
         cityName.textContent = name;
         temperature.textContent = `${Math.round(temp - 273.15).toFixed(1)}°C`;
         description.textContent = desc.charAt(0).toUpperCase() + desc.slice(1);
-        humidity.textContent = `Humidity: ${hum}%`;
+        humidityDisplay.textContent = `Humidity: ${humidity}%`;
         weatherIcon.src = `https://openweathermap.org/img/wn/${icon}@2x.png`;
         weatherIcon.alt = `Weather icon for ${desc}`;
-
-        console.log(icon);
-        console.log(weatherIcon.src); // Log the image source for debugging
-
+        dateTime.textContent = initializeDate(timezone);
+        timeDisplay.textContent = initializeTime(timezone);
+        card.style.background = changeBackgroundColor(id);
+        searchButton.style.background = changeBackgroundColor(id);
         card.style.display = "block";
     } catch {
         // Handle errors during display
@@ -68,9 +87,70 @@ function displayWeatherInfo(data) {
     }
 }
 
+
+
+function initializeDate(timezone){
+    const dateUtc = new Date(1700000000000);
+    
+    let timeZoneOfTheCity = timezone;
+    if (typeof timeZoneOfTheCity !== "number") {
+        timeZoneOfTheCity = 0; // Default to 0 seconds offset if no timezone is provided
+    }   
+    let offsetMs = timeZoneOfTheCity * 1000; // Convert seconds to milliseconds
+    let localDate = new Date(dateUtc.getTime() + offsetMs); // Adjust the date by the timezone offset
+    let date = localDate.getDate();
+    let month = localDate.getMonth() + 1; // Months are zero-indexed
+    let year = localDate.getFullYear();
+
+    const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`;
+
+    return formattedDate;
+}
+
+
+function initializeTime(timezone) {
+    const dateUtc = new Date(1700000000000);
+    
+    let timeZoneOfTheCity = timezone;
+    if (typeof timeZoneOfTheCity !== "number") {
+        timeZoneOfTheCity = 0; // Default to 0 seconds offset if no timezone is provided
+    }   
+    let offsetMs = timeZoneOfTheCity * 1000; // Convert seconds to milliseconds
+    let localDate = new Date(dateUtc.getTime() + offsetMs); // Adjust the date by the timezone offset
+
+    let hours = localDate.getHours();
+    let minutes = localDate.getMinutes();
+    let meridiem = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+
+    return `${hours}:${minutes} ${meridiem}`;
+}
+
+
+
 // Display error messages on the page
 function displayError(message) {
     const errorElement = document.querySelector(".errorDisplay");
     if (errorElement) errorElement.textContent = message;
     card.style.display = "flex";
+}
+
+function changeBackgroundColor(id) {
+    let colorBackground ;
+    if (id >= 200 && id < 300) {
+        colorBackground = "linear-gradient(135deg, #ffcc00 0%, #ff8800 100%)"; // Thunderstorm
+    } else if (id >= 300 && id < 400) {
+        colorBackground = "linear-gradient(135deg, #b2fefa 0%, #0ed2f7 100%)"; // Drizzle
+    } else if (id >= 500 && id < 600) {
+        colorBackground = "linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)"; // Rain
+    } else if (id >= 600 && id < 700) {
+        colorBackground = "linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%)"; // Snow
+    } else if (id >= 700 && id < 800) {
+        colorBackground = "linear-gradient(135deg, #cfd9df 0%, #e2ebf0 100%)"; // Atmosphere
+    } else if (id === 800) {
+        colorBackground = "linear-gradient(135deg, #fceabb 0%, #f8b500 100%)"; // Clear
+    }
+    return colorBackground;
 }
