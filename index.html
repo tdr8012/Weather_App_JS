@@ -6,7 +6,7 @@
     <title>Weather App</title>
     <link href="https://fonts.googleapis.com/css2?family=Parisienne&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="../Weather App/index.css">
+    <link rel="stylesheet" href="../Weather%20App/index.css">
 </head>
 <body>
     <form class="weatherForm">
@@ -15,13 +15,21 @@
 
         <button type="submit" class="submitButton">Get Weather</button>
 
-        <div class="card" style = "display: none;">
-            <h1 class="cityName"></h1>
-            <p class="temperature"></p>
-            <p class="humidityDisplay"></p>
-            <p class="description"></p>
-            <img class="weatherIcon" src="" alt="Weather Icon" style ="display: none;">
-            <p class="errorDisplay"></p> 
+        <div class="card">
+            <div class="card-section card-header">
+                <p id="date">Monday, 27th April</p>
+                <h3 id="timeDisplay">10:00 AM</h3>
+                <h1 class="cityName">London</h1>
+            </div>
+            <div class="card-section card-main">
+                <img class="weatherIcon">
+                <p class="temperature">15°C</p>
+                <p class="humidityDisplay">Humidity: 60%</p>
+                <p class="description">Cloudy</p>
+            </div>
+            <div class="card-section card-footer">
+                <p class="errorDisplay"></p>
+            </div>
         </div>
     </form>
     <script src="../Weather App/index.js"></script>
