@@ -52,6 +52,7 @@ button:hover {
     padding: 20px;
     box-shadow: 0 2px 8px rgba(0, 119, 182, 0.2);
     margin-top: 30px;
+    height: auto;
 }
 
 h1 {
@@ -68,7 +69,7 @@ p{
     margin: 10px 0;
 }
 
-img {
+.weatherIcon {
     width: 100px;
     height: 100px;
     margin: 20px auto;
@@ -92,4 +93,11 @@ img {
 .weatherIcon{
     margin: 0;
     font-size: 7.5rem;
+}
+
+.errorDisplay{
+    color: red;
+    font-size: 1.5rem;
+    text-align: center;
+    margin-top: 20px;
 }
