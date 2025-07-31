@@ -58,7 +58,7 @@ function displayWeatherInfo(data) {
         const { 
             name, 
             timezone,
-            dt, 
+            
             main: { temp, humidity }, 
             weather: [{ description: desc, icon, id }] 
         } = data;
@@ -77,8 +77,8 @@ function displayWeatherInfo(data) {
         humidityDisplay.textContent = `Humidity: ${humidity}%`;
         weatherIcon.src = `https://openweathermap.org/img/wn/${icon}@2x.png`;
         weatherIcon.alt = `Weather icon for ${desc}`;
-        dateTime.textContent = initializeDate(dt, timezone);
-        timeDisplay.textContent = initializeTime(dt, timezone);
+        dateTime.textContent = initializeDate(timezone);
+        timeDisplay.textContent = initializeTime(timezone);
         card.style.background = changeBackgroundColor(id);
         searchButton.style.background = changeBackgroundColor(id);
         card.style.display = "block";
@@ -90,9 +90,13 @@ function displayWeatherInfo(data) {
 
 
 
-function initializeDate(utcSeconds, timezoneOffset) {
-    const utcMillis = (utcSeconds + timezoneOffset) * 1000;
-    const localDate = new Date(utcMillis);
+function initializeDate(timezoneOffset) {
+    // Get current UTC time in milliseconds
+    const now = new Date();
+    const utcMillis = now.getTime() + (now.getTimezoneOffset() * 60000);
+    // Apply the timezone offset from API (in seconds)
+    const localMillis = utcMillis + (timezoneOffset * 1000);
+    const localDate = new Date(localMillis);
 
     const date = localDate.getDate();
     const month = localDate.getMonth() + 1;
@@ -101,9 +105,13 @@ function initializeDate(utcSeconds, timezoneOffset) {
     return `${year}-${month.toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`;
 }
 
-function initializeTime(utcSeconds, timezoneOffset) {
-    const utcMillis = (utcSeconds + timezoneOffset) * 1000;
-    const localDate = new Date(utcMillis);
+function initializeTime(timezoneOffset) {
+    // Get current UTC time in milliseconds
+    const now = new Date();
+    const utcMillis = now.getTime() + (now.getTimezoneOffset() * 60000);
+    // Apply the timezone offset from API (in seconds)
+    const localMillis = utcMillis + (timezoneOffset * 1000);
+    const localDate = new Date(localMillis);
 
     let hours = localDate.getHours();
     let minutes = localDate.getMinutes();
