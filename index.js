@@ -76,8 +76,8 @@ function displayWeatherInfo(data) {
         humidityDisplay.textContent = `Humidity: ${humidity}%`;
         weatherIcon.src = `https://openweathermap.org/img/wn/${icon}@2x.png`;
         weatherIcon.alt = `Weather icon for ${desc}`;
-        dateTime.textContent = initializeDate(timezone);
-        timeDisplay.textContent = initializeTime(timezone);
+        dateTime.textContent = initializeDate(dt, timezone);
+        timeDisplay.textContent = initializeTime(dt, timezone);
         card.style.background = changeBackgroundColor(id);
         searchButton.style.background = changeBackgroundColor(id);
         card.style.display = "block";
@@ -89,45 +89,29 @@ function displayWeatherInfo(data) {
 
 
 
-function initializeDate(timezone){
-    const dateUtc = new Date(1700000000000);
-    
-    let timeZoneOfTheCity = timezone;
-    if (typeof timeZoneOfTheCity !== "number") {
-        timeZoneOfTheCity = 0; // Default to 0 seconds offset if no timezone is provided
-    }   
-    let offsetMs = timeZoneOfTheCity * 1000; // Convert seconds to milliseconds
-    let localDate = new Date(dateUtc.getTime() + offsetMs); // Adjust the date by the timezone offset
-    let date = localDate.getDate();
-    let month = localDate.getMonth() + 1; // Months are zero-indexed
-    let year = localDate.getFullYear();
+function initializeDate(utcSeconds, timezoneOffset) {
+    const utcMillis = (utcSeconds + timezoneOffset) * 1000;
+    const localDate = new Date(utcMillis);
 
-    const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`;
+    const date = localDate.getDate();
+    const month = localDate.getMonth() + 1;
+    const year = localDate.getFullYear();
 
-    return formattedDate;
+    return `${year}-${month.toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`;
 }
 
-
-function initializeTime(timezone) {
-    const dateUtc = new Date(1700000000000);
-    
-    let timeZoneOfTheCity = timezone;
-    if (typeof timeZoneOfTheCity !== "number") {
-        timeZoneOfTheCity = 0; // Default to 0 seconds offset if no timezone is provided
-    }   
-    let offsetMs = timeZoneOfTheCity * 1000; // Convert seconds to milliseconds
-    let localDate = new Date(dateUtc.getTime() + offsetMs); // Adjust the date by the timezone offset
+function initializeTime(utcSeconds, timezoneOffset) {
+    const utcMillis = (utcSeconds + timezoneOffset) * 1000;
+    const localDate = new Date(utcMillis);
 
     let hours = localDate.getHours();
     let minutes = localDate.getMinutes();
-    let meridiem = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? '0' + minutes : minutes;
+    const meridiem = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    minutes = minutes.toString().padStart(2, '0');
 
     return `${hours}:${minutes} ${meridiem}`;
 }
-
 
 
 // Display error messages on the page
