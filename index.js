@@ -57,7 +57,8 @@ function displayWeatherInfo(data) {
         // Destructure relevant data from API response
         const { 
             name, 
-            timezone, 
+            timezone,
+            dt, 
             main: { temp, humidity }, 
             weather: [{ description: desc, icon, id }] 
         } = data;
